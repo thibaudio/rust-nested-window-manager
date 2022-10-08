@@ -9,4 +9,4 @@ Shortcut to switch between programs.
 Nice to have: Modules to be displayed on the taskbar.  
 
 Why:
-Streaming only a portion of my ultrawide monitor
+Streaming only a portion of a monitor
