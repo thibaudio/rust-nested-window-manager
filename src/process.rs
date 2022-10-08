@@ -1,6 +1,11 @@
-use std::{ffi::OsStr, os::windows::prelude::OsStrExt, ptr::null_mut};
+use std::{ffi::OsStr, os::windows::prelude::OsStrExt, ptr::null_mut, sync::{Mutex, Arc, mpsc}, thread};
 use anyhow::{Result, bail};
-use winapi::{um::{winbase::STARTUPINFOEXW, processthreadsapi::{InitializeProcThreadAttributeList, LPPROC_THREAD_ATTRIBUTE_LIST, PROCESS_INFORMATION, CreateProcessW}, errhandlingapi::GetLastError}, shared::{minwindef::BOOL, ntdef::LPCWSTR}};
+use winapi::{um::{winbase::STARTUPINFOEXW, processthreadsapi::{InitializeProcThreadAttributeList, LPPROC_THREAD_ATTRIBUTE_LIST, PROCESS_INFORMATION, CreateProcessW}, errhandlingapi::GetLastError, winuser::EnumWindows}, shared::{minwindef::{BOOL, LPARAM}, ntdef::LPCWSTR, windef::HWND}};
+
+#[derive(PartialEq)]
+pub struct Process {
+    window: HWND,
+}
 
 pub fn create_subprocess(exec: &String) -> Result<()> {
     let lpFile = OsStr::new(&exec).encode_wide().chain(Some(0).into_iter()).collect::<Vec<_>>();

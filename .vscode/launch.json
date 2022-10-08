@@ -7,15 +7,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'tests'",
+            "name": "Debug executable 'rust-nested-window-manager'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=tests",
-                    "--package=tests"
+                    "--bin=rust-nested-window-manager",
+                    "--package=rust-nested-window-manager"
                 ],
                 "filter": {
-                    "name": "tests",
+                    "name": "rust-nested-window-manager",
                     "kind": "bin"
                 }
             },
@@ -25,16 +25,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'tests'",
+            "name": "Debug unit tests in executable 'rust-nested-window-manager'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=tests",
-                    "--package=tests"
+                    "--bin=rust-nested-window-manager",
+                    "--package=rust-nested-window-manager"
                 ],
                 "filter": {
-                    "name": "tests",
+                    "name": "rust-nested-window-manager",
                     "kind": "bin"
                 }
             },

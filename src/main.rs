@@ -1,8 +1,11 @@
 mod process;
+mod window_manager;
 
 extern crate native_windows_gui as nwg;
 
 use nwg::{NativeUi, ControlHandle, Window};
+
+use window_manager::WindowManager;
 
 pub struct ItemDefinition {
     shellexecute_path: String
@@ -44,7 +47,6 @@ impl BasicApp {
 //
 mod basic_app_ui {
     use native_windows_gui as nwg;
-    use nwg::bind_raw_event_handler;
     use super::*;
     use std::rc::Rc;
     use std::cell::RefCell;
@@ -151,17 +153,9 @@ fn main() {
     nwg::Font::set_global_family("Segoe UI").expect("Failed to set default font");
     let _ui = BasicApp::build_ui(Default::default()).expect("Failed to build UI");
     
-    use winapi::um::winuser::WM_SIZE;
-    use winapi::shared::minwindef::{HIWORD, LOWORD};
-    const MY_UNIQUE_RAW_HANDLER_ID: usize = 457768;
-    nwg::bind_raw_event_handler(&_ui.window.handle, MY_UNIQUE_RAW_HANDLER_ID, |_hnwd, msg, _w, l| {
-        match msg {
-            WM_MOVE => {
-                println!("w: {}, h: {}", LOWORD(l as u32), HIWORD(l as u32));
-            },
-            _ => {}
-        }
-        None
-    });
+    let wm = WindowManager::new();
+    wm.start();
+
+    
     nwg::dispatch_thread_events();
 }
