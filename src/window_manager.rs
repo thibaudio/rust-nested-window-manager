@@ -1,14 +1,13 @@
 use std::{thread, sync::{Arc, Mutex}};
 
-use winapi::{shared::{minwindef::LPARAM, ntdef::LPWSTR, windef::HWND}, um::winuser::{SetWindowPos, SWP_FRAMECHANGED, FindWindowW, EnumWindows}};
-
+use winapi::{shared::{minwindef::LPARAM, ntdef::LPWSTR, windef::{HWND}}, um::{winuser::{SetWindowPos, SWP_FRAMECHANGED, FindWindowW, EnumWindows}}};
 
 struct Window(HWND);
 
 unsafe impl Send for Window {}
 
 pub(crate) struct WindowManager {
-    watched_windows: Arc<Mutex<Vec<Window>>>
+    watched_windows: Arc<Mutex<Vec<Window>>>,
 }
 
 impl WindowManager {
@@ -28,20 +27,14 @@ impl WindowManager {
             }
             thread::sleep(std::time::Duration::from_secs(1));
         });
+    }
 
-        watched_windows = self.watched_windows.clone();
-        thread::spawn(move || loop {
-            {
-                let mut watched_windows_in_thread = watched_windows.lock().unwrap();
-                if let Some(hwnd) = get_applications() {
-                   watched_windows_in_thread.push(Window(hwnd));
-                }
-            }
-            thread::sleep(std::time::Duration::from_secs(1));
-        });
+    pub fn register_application(&self, hwnd: HWND) {
+        let mut watched_windows = self.watched_windows.clone();
+        let mut watched_windows_in_thread = watched_windows.lock().unwrap();
+        watched_windows_in_thread.push(Window(hwnd));
     }
 }
-
 
 pub fn get_applications() -> Option<HWND> {
     unsafe { 

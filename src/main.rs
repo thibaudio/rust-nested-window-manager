@@ -1,10 +1,13 @@
 mod process;
 mod window_manager;
+mod keyboard;
 
 extern crate native_windows_gui as nwg;
 
-use nwg::{NativeUi, ControlHandle, Window};
+use keyboard::KeyboardManager;
+use nwg::{NativeUi, ControlHandle, Window, bind_raw_event_handler};
 
+use winapi::{um::winuser::{WM_HOTKEY, GetForegroundWindow, MOD_CONTROL}, shared::minwindef::{HIWORD, LOWORD, WORD}};
 use window_manager::WindowManager;
 
 pub struct ItemDefinition {
@@ -152,10 +155,28 @@ fn main() {
     nwg::init().expect("Failed to init Native Windows GUI");
     nwg::Font::set_global_family("Segoe UI").expect("Failed to set default font");
     let _ui = BasicApp::build_ui(Default::default()).expect("Failed to build UI");
-    
+
     let wm = WindowManager::new();
     wm.start();
 
+    let mut km = KeyboardManager::new(_ui.window.handle);
+    km.start_listening_for_keyboard_event();
+
+    
+    bind_raw_event_handler(&_ui.window.handle, 65536, move |_hwnd, msg, _w, l| {
+        match msg {
+            _WM_HOTKEY => {
+                if LOWORD(l as u32) == MOD_CONTROL as WORD && HIWORD(l as u32) == 0x4B {
+                    let hwnd = unsafe { GetForegroundWindow() };
+                    wm.register_application(hwnd);
+                }
+            },
+            _ => {}
+        }
+        None
+    });
     
     nwg::dispatch_thread_events();
+
+    km.stop_listening_for_keyboard_event();
 }

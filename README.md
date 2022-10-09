@@ -8,5 +8,10 @@ Task bar displaying watched program and highlighting the active one.
 Shortcut to switch between programs.  
 Nice to have: Modules to be displayed on the taskbar.  
 
-Why:
-Streaming only a portion of a monitor
+Usage:
+With the WM running, focus a window and hit CTRL + K
+
+todo:
+- [ ] Configuration file (hotkey, area definition)
+- [ ] Hotkey to deregister window
+- [ ] Deregister window when it's closed
